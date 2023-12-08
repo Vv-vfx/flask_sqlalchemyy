@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}
+Статья: {{article.article_heading}} 
+{% endblock %}
+
+{% block main %}
+
+        <h2>Статья: {{article.article_heading}}</h2>
+        <p>{{article.article_body}}</p>
+
+{% endblock %}

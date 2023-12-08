@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+Главная страница
+{% endblock %}
+
+{% block main %}
+        <h2>Статьи всех авторов:</h2>
+        <div class="row">
+          {% if articles %}
+          {% for article_id, article_heading, article_body in articles %}
+            <div class="col-md-3 col-sm-6 mb-3">
+              <div class="card">
+                <img src="{{url_for('static', filename='images/logo.svg')}}" class="card-img-top" alt="..." width="10" height="20">
+                <div class="card-body">
+                    <h5 class="card-title">{{article_heading}}</h5>
+                    <p class="card-text">{{article_body}}</p>
+                    <a href="{{url_for('article_by_id', article_id=article_id)}}" class="btn btn-primary">Читать статью</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          {% else %}
+          <h1>Нет статей</h1>
+
+          {% endif %}
+        </div>
+
+{% endblock %}

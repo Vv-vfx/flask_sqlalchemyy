@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}
+Добавление статьи
+{% endblock %}
+
+{% block main %}
+
+<form method="POST">
+        {{ form.csrf_token }}
+        {{ form.author_login.label }} {{ form.author_login(class="form-control") }}
+        {{ form.article_heading.label }} {{ form.article_heading(class="form-control") }}
+        {{ form.article_body.label }} {{ form.article_body(class="form-control") }}
+<input type="submit" value="Добавить">
+</form>
+
+{% endblock %}
