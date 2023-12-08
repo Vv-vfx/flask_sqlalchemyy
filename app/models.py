@@ -19,6 +19,7 @@ from sqlalchemy.orm import (
 # from app.db_modules.engine_db import engine
 from app.db_modules.create_db import db
 
+
 # class Base(DeclarativeBase):
 #     pass
 
@@ -34,9 +35,10 @@ class Author(db.Model):
     surname: Mapped[str]
     postal_address: Mapped[str] = mapped_column(String(200))
     articles: Mapped[List["Articles"] | None] = relationship(back_populates="author", cascade="all, delete-orphan")
-    
+
     # def __repr__(self) -> str:
     #     return f"Author(id={self.id!r}, login={self.login!r}, password={self.password!r}, email={self.email!r}, lastname={self.lastname!r}, name={self.name!r}, surname={self.surname!r}, postal_address={self.postal_address!r}, author_article={self.author_article!r})"
+
 
 class Articles(db.Model):
     __tablename__ = "articles"
@@ -46,10 +48,11 @@ class Articles(db.Model):
     article_body: Mapped[str]
     author_id: Mapped[int] = mapped_column(ForeignKey("authors.id"))
     author: Mapped["Author"] = relationship(back_populates="articles")
-    
+
     # def __repr__(self) -> str:
     #     return f"Article(id={self.id!r}, article_heading={self.article_heading!r}, article_body={self.article_body!r}, author_id={self.author_id!r}, author={self.author!r})"
-    
+
+
 def create_table():
     print('Создаём таблицы')
     db.create_all()

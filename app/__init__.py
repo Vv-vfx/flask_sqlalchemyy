@@ -10,6 +10,7 @@ app = Flask(__name__)
 # при команде flask create-db
 from app import routes 
 
+app.config['DEBUG'] = True
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 app.config["SECRET_KEY"] = SECRET_KEY
 
