@@ -1,0 +1,62 @@
+version: "3.4"
+
+services:
+  pg:
+    env_file:
+      - ./local/.env.local
+    image: postgres:16
+
+    ports:
+      - "5433:5432"
+#    volumes:
+#      - db-data:/var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+
+
+  dev-backend: # app + db in start in Docker
+    env_file:
+      - ./dev/.env.dev
+    build:
+      context: .
+      dockerfile: ./dev/Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      pg:
+        condition: service_healthy
+    command: bash -c "
+      flask db upgrade
+      && flask main fill-db-fakes
+      && python main.py
+      "
+  gunicorn-backend: # app + db + gunicorn in start in Docker
+    env_file:
+      - ./gunicorn/.env.gunicorn
+    build:
+      context: .
+      dockerfile: ./gunicorn/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      pg:
+        condition: service_healthy
+    command: bash -c "
+      flask db upgrade
+      && flask main fill-db-fakes
+      && gunicorn main:app -b 0.0.0.0
+      "
+  prod-backend: # app + db + gunicorn + ngnix in start in Docker
+    env_file:
+      - ./prod/.env.prod
+    build:
+      context: .
+      dockerfile: ./prod/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      pg:
+        condition: service_healthy

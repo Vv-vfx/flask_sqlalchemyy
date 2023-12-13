@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}
+Отправить вопрос
+{% endblock %}
+
+{% block main %}
+   <h1>Отправить вопрос</h1>
+        <form method="POST">
+                {{ form.csrf_token }}
+                <h2>{{ current_user.username }}, Вы можете отправить вопрос.</h2>
+                   {{ form.question.label }} {{ form.question(class="form-control form-control-lg", placeholder="Введите ваш вопрос", rows=10) }}
+                <input type="submit" value="Добавить">
+        </form>
+     
+{% endblock %}
+
+

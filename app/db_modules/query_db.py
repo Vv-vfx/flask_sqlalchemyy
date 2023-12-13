@@ -1,34 +1,27 @@
-from sqlalchemy.orm import Session
+from werkzeug.security import generate_password_hash
+
 from app.db_modules.demo_authors import authors_list
 from sqlalchemy import select
 from app.db_modules.create_db import db
 
-
 from app.models import (
-    Author,
+    User,
     Articles,
+    Role,
 )
 
-def add_article_by_author_login(author_login, article_heading, article_body):
-    
-    author = Author(
-        login=author_login,
-        password='123',
-        email='fake.email()',
-        lastname='ИВАААААААААН',
-        name='ИВАААААААААН',
-        surname='ИВАААААААААН',
-        postal_address='ИВАААААААААН',
-        articles=[Articles(article_heading=article_heading,article_body=article_body),]
-        )
+
+def add_article_by_username(user, article_heading, article_body):
+    article = Articles(
+        article_heading=article_heading,
+        article_body=article_body,
+        user_id=user.id
+    )
     session = db.session
-    session.add(author)
+    session.add(article)
     session.commit()
     print('Добавили статью')
-    
-     
 
-    
 
 def fill_db_fakes_info():
     session = db.session
@@ -38,58 +31,69 @@ def fill_db_fakes_info():
     print('*' * 100)
 
 
-def get_all_articles_by_author_login_v1(author_login):
+def check_author_in_db(email):
+    return User.query.filter_by(email=email).first()
 
+
+def add_author_to_db(username, email, password):
+    role_user = Role(role_name='user', description='Просто пользователь')
+
+    author = User(
+        username=username,
+        password=generate_password_hash(password, method='scrypt'),
+        email=email,
+        author_roles=role_user
+    )
+    session = db.session
+    session.add(author)
+    session.commit()
+
+
+
+def get_all_articles_by_author_login_v1(username):
     session = db.session
 
-    stmt = select(Author).where(Author.login==author_login)
+    stmt = select(User).where(User.username == username)
 
-    print(f"Все статьи для автора с логином {author_login}")
+    print(f"Все статьи для автора с логином {username}")
 
     all_articles_by_login_author = []
-    
+
     for author in session.scalars(stmt):
         for article in author.articles:
-            all_articles_by_login_author.append(article.article_heading, article.article_body)
-    
+            all_articles_by_login_author.append((article.article_heading, article.article_body))
+
     return all_articles_by_login_author
 
-def get_all_articles():
 
+def get_all_articles():
     session = db.session
-    stmt = select(Articles)
+    # stmt = select(Articles)
+    stmt = session.query(Articles).all()
 
     all_articles = []
-    
-    for article in session.scalars(stmt):
+
+    # for article in session.scalars(stmt):
+    for article in stmt:
         all_articles.append((article.id, article.article_heading, article.article_body[:60]))
-    
+
     return all_articles
 
-def get_all_articles_by_author_login_v2(author_login):
-
-    session = db.session
-
-    stmt = session.query(Author).filter(Author.login==author_login).all()
-
-    print(f"Все статьи для автора с логином {author_login}")
-    
-    for author in stmt:
-        for article in author.articles:
-            print(f'Заголовок статьи: "{article.article_heading}"')
-            print(f'Тело статьи: "{article.article_body}"')
-
-
-        print(article)
 
 def get_article_by_id(article_id):
-
     session = db.session
 
     stmt = session.query(Articles).get(article_id)
     return stmt
 
-    
+
+def get_db_info():
+    session = db.session
+
+    stmt = session.query(User).all()
+    # print(stmt)
+
+    return stmt
 
 
 if __name__ == '__main__':

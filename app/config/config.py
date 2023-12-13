@@ -1,15 +1,18 @@
-from dotenv import dotenv_values
+import os
 
-config = dict(dotenv_values(dotenv_path=".env.shared"))
+config_data = dict(os.environ)
 
-# print(config)
-# exit()
-TEST_DB_NAME = config['TEST_DB_NAME']
-DB_USER = config['DB_USER']
-BD_PASSWORD = config['BD_PASSWORD']
-SECRET_KEY = config['SECRET_KEY']
+POSTGRES_DB = config_data.get('POSTGRES_DB','blog_base')
+POSTGRES_USER = config_data.get('POSTGRES_USER', 'postgres')
+POSTGRES_PASSWORD = config_data.get('POSTGRES_PASSWORD', '12345')
+SECRET_KEY = config_data.get('SECRET_KEY', 'ksdfljfmsdlfsywergywuerg')
+SECURITY_PASSWORD_SALT = config_data.get('SECURITY_PASSWORD_SALT', 'QWERTY')
+POSTGRES_PORT = config_data.get('POSTGRES_PORT', '5432')
 
-DSN = f"postgresql+psycopg2://{DB_USER}:{BD_PASSWORD}@localhost:5432/{TEST_DB_NAME}"
-SQLALCHEMY_DATABASE_URI = f"postgresql://{DB_USER}:{BD_PASSWORD}@localhost/{TEST_DB_NAME}"
+# for docker
+DSN = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@pg:{POSTGRES_PORT}/{POSTGRES_DB}"
+
+# for local
+# DSN = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost:{POSTGRES_PORT}/{POSTGRES_DB}"
+
 DB_ECHO = True
-

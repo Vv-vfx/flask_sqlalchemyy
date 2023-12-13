@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Авторизация
+{% endblock %}
+
+{% block main %}
+    <h1 class="title">Авторизация</h1>
+    <form method="POST">
+        {{ form.csrf_token }}
+        {{ form.email.label }} {{ form.email(class="form-control") }}
+        {{ form.password.label }} {{ form.password(class="form-control") }}
+        {{ form.remember.label }} {{ form.remember() }}
+        <br>
+        <br>
+        <input type="submit" value="Войти">
+    </form>
+
+
+{% endblock %}
